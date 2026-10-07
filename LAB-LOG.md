@@ -143,3 +143,53 @@ The inferred privacy requirement was added to the PRD during this audit. The
 prior Validate-02 quality report predates that edit and must be rerun before it
 is treated as a review of the amended PRD. The draft remains unapproved, and
 the 19 unresolved questions remain open.
+
+## Exercise 3 Deployment Diagram
+
+The diagram below represents all ten resources declared in `infra/main.bicep`.
+The outer boundary is the implicit resource group scope; the file declares no
+VNet or subnet.
+
+```text
++-- Resource Group ------------------------------------------------------+
+|                                                                        |
+|  +-- Foundry account [foundry] ------------------------------------+   |
+|  |  +-- Project [project: policy-desk]                             |   |
+|  |  +-- Model deployment [chatModel: gpt-5-mini]                   |   |
+|  |  +-- Model deployment [embeddingModel: text-embedding-3-small]  |   |
+|  +-----------------------------------------------------------------+   |
+|                                                                        |
+|  +-- Log Analytics workspace [logs; 90-day retention]             |   |
+|  +-- Storage account [auditStore; Standard_ZRS; shared key off]   |   |
+|                                                                        |
+|  +-- Container Apps environment [appEnv] -------------------------+   |
+|  |  +-- Container App [app; internal ingress; target port 8000]   |   |
+|  +-----------------------------------------------------------------+   |
+|                                                                        |
+|  Role assignment [appCanCallModels]                                    |
+|  Role assignment [appCanWriteAudit]                                    |
++------------------------------------------------------------------------+
+
+app -- PROJECT_ENDPOINT (Foundry endpoint + project name) --> project
+app -- MODEL_DEPLOYMENT ------------------------------------> chatModel
+app -- EMBEDDING_DEPLOYMENT --------------------------------> embeddingModel
+app -- AUDIT_BLOB_ENDPOINT ---------------------------------> auditStore
+appEnv -- appLogsConfiguration -----------------------------> logs
+app.identity.principalId --> appCanCallModels --scope------> foundry
+app.identity.principalId --> appCanWriteAudit --scope------> auditStore
+```
+
+### Bicep Cross-Check
+
+* Resource inventory: Foundry account, project, two deployments, Log Analytics
+	workspace, storage account, Container Apps environment, Container App, and
+	two role assignments are all represented.
+* The app-to-project/model/storage labels correspond to `PROJECT_ENDPOINT`,
+	`MODEL_DEPLOYMENT`, `EMBEDDING_DEPLOYMENT`, and `AUDIT_BLOB_ENDPOINT` in the
+	app container environment variables.
+* The environment-to-Log-Analytics edge corresponds to
+	`appEnv.properties.appLogsConfiguration`, which references `logs`.
+* Both identity edges use `app.identity.principalId`; the role-assignment
+	scopes are `foundry` and `auditStore`, respectively.
+* The app ingress is internal (`external: false`); Foundry public network
+	access is enabled. No network resource or subnet is declared.
