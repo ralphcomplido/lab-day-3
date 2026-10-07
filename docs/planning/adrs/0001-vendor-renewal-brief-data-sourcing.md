@@ -87,11 +87,11 @@ Contract-PDF indexing remains a separately evaluated, optional supplement for co
 
 ## Decision Outcome
 
-Chosen option: "API-first structured access" for this lab ADR, because data authority, freshness, and traceability take priority over the CSV's immediate availability. This is proposed for the exercise only, not stakeholder approval; the organizational decider remains unassigned/TBD under OQ-003.
+Lab-only candidate selected for comparison: "API-first structured access," because data authority, freshness, and traceability take priority over the CSV's immediate availability. Production source selection is deferred: API access, required coverage, security controls, reliability, and cost are unverified. This lab choice is not stakeholder approval; the organizational decider remains unassigned/TBD under OQ-003. ADR status remains proposed.
 
 | Driver | Governed batch exports | API-first structured access | Source-specific hybrid |
 |---|---|---|---|
-| Authority and traceability | Depends on export ownership, stable IDs, and evidence retention. | Preferred if authoritative and traceable references are exposed; unverified. | Can match paths by data set, but requires reconciliation. |
+| Authority and traceability | Depends on export ownership, stable IDs, and evidence retention. | Potential fit only if authoritative and traceable references are exposed; unverified, with no production preference established. | Can match paths by data set, but requires reconciliation. |
 | Access and freshness | Nightly prototype fields may be stale; schema governance unknown. | Potentially fresher, but access and coverage unverified. | Timing and access differ across source paths. |
 | Least privilege | Depends on export filtering and distribution controls. | Depends on API scopes and field access; test required. | Requires consistent controls across multiple mechanisms. |
 | Latency and cost | Avoids live calls, but ingestion and refresh cost need measurement. | Live calls may affect latency, availability, and cost; test against two minutes. | Adds operational and reconciliation cost; measure it. |
@@ -102,8 +102,11 @@ Chosen option: "API-first structured access" for this lab ADR, because data auth
 * Bad, because API access is pending and scorecard, findings, and exception coverage is unverified.
 * Bad, because API reliability, least-privilege permissions, and latency against the under-two-minute target must be tested.
 * Neutral, because cost must be measured but the per-brief cap remains open under OQ-005.
+* Bad, because least-privilege vendor-source access is not demonstrated by the current Bicep, which grants roles only for Foundry and audit storage. Source identity, permissions, field allowlists, network controls, evidence integrity, and handling of unnecessary contact data remain to be established under OQ-006 and OQ-007.
+* Neutral, because no option is yet shown to be more reliable or operationally preferable end to end. Compare API availability and live-call latency with export freshness, delivery, and schema-change risks; include hybrid reconciliation and support burden. Failure, recovery, staleness, and operating ownership remain open under OQ-008, OQ-011, OQ-015, and OQ-016.
+* Neutral, because there is no cost basis for preferring an option. Measure API access and integration, export delivery/refresh/storage, hybrid reconciliation/support, and reruns; the accounting boundary and cap remain open under OQ-005.
 * PDF indexing is not selected; scan quality and page citations require separate evaluation if reconsidered.
-* If API coverage or access controls fail, reopen the decision explicitly. Do not assume CSV or hybrid as fallback.
+* Production source selection remains deferred. If API coverage or access controls fail, reopen the comparison explicitly. Do not assume CSV or hybrid as fallback.
 * No telemetry instruments, names, attributes, or retention periods are selected. Before implementation, specify API-boundary and source-evidence observability using the telemetry-foundations Trace Vocabulary, Metric Vocabulary, Log Vocabulary, and PII Handling sections; PRD OQ-006 and OQ-019 remain open.
 
 ## Pros and Cons of the Options

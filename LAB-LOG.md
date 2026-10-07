@@ -193,3 +193,23 @@ app.identity.principalId --> appCanWriteAudit --scope------> auditStore
 	scopes are `foundry` and `auditStore`, respectively.
 * The app ingress is internal (`external: false`); Foundry public network
 	access is enabled. No network resource or subnet is declared.
+
+## Exercise 4 Architecture Review
+
+Review record: `.copilot-tracking/reviews/architecture/2026-10-07/vendor-data-source-architecture-review.md`.
+The reviewer grouped reliability and operational burden in one pillar finding;
+the disposition below addresses both concerns separately. All four findings are
+accepted. Acceptance records the reviewer's evidence-based concerns; it does not
+approve a production source, close PRD questions, or grant organizational
+authority.
+
+| Finding | Disposition | Rationale | Effect on ADR |
+| --- | --- | --- | --- |
+| Production API-first selection is not evidence-supported | Accepted | API access is pending, coverage and controls are unverified, the production decision owner is unassigned, and the Bicep has no vendor-source integration. | Clarify that API-first is a lab comparison candidate only and production source selection is deferred. Keep ADR status proposed; no production option is approved. |
+| Vendor-source security controls are unresolved | Accepted | Existing Bicep roles cover Foundry and audit storage only. It defines no vendor-source identity or permissions; field allowlists, source access, logging, redaction, and contact-data controls remain open after a prior exposure. | Add these as consequences and pre-implementation verification conditions. Preserve OQ-006 and OQ-007; no candidate is preferred on security yet. |
+| Reliability and operational burden are not comparatively validated | Accepted | API availability/latency and export freshness/delivery/schema risks are unmeasured; a hybrid adds reconciliation and support work. Failure handling, recovery, and operating ownership remain open. | Record that no option is ranked end to end and require like-for-like validation. Preserve OQ-008, OQ-011, OQ-015, and OQ-016; production selection remains deferred. |
+| No cost basis supports choosing an option | Accepted | API, export, and hybrid costs, reruns, and accounting boundaries are unmeasured; annual volume is planning context only. | Add the missing cost comparison to consequences and validation. Preserve OQ-005 and do not claim a cost-based preference. |
+
+No findings were rejected. The ADR retains API-first only as the lab's
+candidate for comparison; its frontmatter remains `proposed`, organizational
+approval remains unassigned/TBD, and the PRD's open questions remain open.
