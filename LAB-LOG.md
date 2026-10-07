@@ -213,3 +213,49 @@ authority.
 No findings were rejected. The ADR retains API-first only as the lab's
 candidate for comparison; its frontmatter remains `proposed`, organizational
 approval remains unassigned/TBD, and the PRD's open questions remain open.
+
+## Exercise 5 Performance and Reliability Plan
+
+Plan: `.copilot-tracking/performance-plans/2026-10-07-performance-slo-plan.md`.
+The plan cites PRD requirement IDs, retains cost per brief as open under OQ-005,
+and labels proposed profiles and targets as assumptions rather than approved
+commitments. No load tests were run; the planner produces a test plan, not test
+execution.
+
+### Alert Choice
+
+Choose generation duration (NFR-001) as the production alert signal. It is the
+only approved quantitative SLO, applies to both scheduled and on-demand brief
+generation, and directly reflects the meeting's under-120-second requirement,
+excluding analyst review. The plan's p95 aggregation, 28-day window, and 5%
+error budget are assumptions, not approved alert thresholds; validate them with
+the owning team before configuring a production alert.
+
+### Unsourced Assumptions and Open Targets
+
+* Generation p95, 28-day measurement window, and 5% error budget are assumptions;
+	NFR-001 establishes only the under-120-second duration requirement. (OQ-011)
+* A 99% successful-generation target, 28-day window, and 1% failure budget have
+	no agreed source. (OQ-015)
+* A five-minute p95 scheduled-trigger-lag target, 28-day window, and 5% error
+	budget have no agreed source. (OQ-015, OQ-016)
+* A 95% same-business-day reviewed-delivery target, its 28-day window, and its
+	error budget are assumptions; same-day delivery was tentative, not an approved
+	SLA. (OQ-004, OQ-015)
+* Steady, peak, spike, and soak concurrency/rate/duration profiles are proposed
+	test scenarios, not sourced traffic commitments. The 260-working-day year used
+	to derive working-day averages is also an assumption; the transcript's annual
+	volumes are planning estimates only. (OQ-002, OQ-014, OQ-015)
+* An isolated pre-production test environment using synthetic or approved
+	de-identified snapshots is proposed, not specified by the transcript or PRD.
+* Proposed P0/P1 backlog priorities are not approved product priorities or a
+	MoSCoW decision. (OQ-014)
+* Metric names, dimensions, spans, sampling, and telemetry/redaction details are
+	proposals; approved telemetry vocabulary and evidence handling remain open.
+	(OQ-006, OQ-007, OQ-019)
+* Cost per brief, rerun accounting, and the cost cap remain open under OQ-005;
+	no numeric cost target was adopted from the meeting's proposals.
+
+The cited annual volumes (about 340 total renewals and about 65 Tier 1/2) are
+transcript-supported estimates. Daily rates derived from them are arithmetic
+planning context, not committed throughput or concurrency requirements.
